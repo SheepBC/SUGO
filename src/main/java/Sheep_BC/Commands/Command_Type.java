@@ -3,7 +3,8 @@ package Sheep_BC.Commands;
 public enum Command_Type {
     BASIC("기본"),
     MUSIC("음악"),
-    SCHOOL("학교");
+    SCHOOL("학교"),
+    RECOMMAND("추천");
 
     private final String command;
 

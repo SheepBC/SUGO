@@ -4,6 +4,7 @@ import Sheep_BC.Annotations.ButtonEvent;
 import Sheep_BC.Annotations.MessageEvent;
 import Sheep_BC.Commands.Basic;
 import Sheep_BC.Commands.Maneger;
+import Sheep_BC.Commands.Recommand;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -40,6 +41,9 @@ public class ButtonInteraction implements Runnable {
         }
         else if(Button_id.equalsIgnoreCase("Inquiry_Reply")){
             Maneger.Button_Inquiry_Reply(event);
+        }
+        else if(Button_id.startsWith("Rank")){
+            Recommand.rank_Button(event);
         }
 
 

@@ -2,6 +2,7 @@ package Sheep_BC.Main;
 
 import Sheep_BC.Commands.Basic;
 import Sheep_BC.Annotations.*;
+import Sheep_BC.Commands.Recommand;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -19,7 +20,10 @@ public class MessageReceived implements Runnable{
     MessageChannel channel;
 
     String[] prefixes = {"숩","ㅅ","t"};
-    public static Class[] event_class = new Class[]{Basic.class};
+    public static Class[] event_class = new Class[]{
+            Basic.class,
+            Recommand.class
+    };
 
     public MessageReceived(MessageReceivedEvent event){
         this.event = event;
