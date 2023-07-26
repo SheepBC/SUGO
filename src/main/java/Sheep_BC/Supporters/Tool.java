@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -121,6 +122,32 @@ public class Tool {
         }
         list[index] = s.substring(beginIndex);
         return list;
+    }
+
+    //랭크 관련 끝
+
+    public static String time_Unit(long second){
+        return time_Unit(new BigInteger(String.valueOf(second)));
+    }
+
+    public static String time_Unit(BigInteger second){
+
+        BigInteger[] times = new BigInteger[5];
+        times[0] = second.divide(new BigInteger("604800"));
+        times[1] = second.divide(new BigInteger("86400")).remainder(new BigInteger("7"));
+        times[2] = second.divide(new BigInteger("3600")).remainder(new BigInteger("24"));
+        times[3] = second.divide(new BigInteger("60")).remainder(new BigInteger("60"));
+        times[4] = second.remainder(new BigInteger("60"));
+
+        String time = "";
+
+        if(!times[0].equals(BigInteger.ZERO)) time += times[0]+"주 ";
+        if(!times[1].equals(BigInteger.ZERO)) time += times[1]+"일 ";
+        if(!times[2].equals(BigInteger.ZERO)) time += times[2]+"시간 ";
+        if(!times[3].equals(BigInteger.ZERO)) time += times[3]+"분 ";
+        if(!times[4].equals(BigInteger.ZERO)) time += times[4]+"초";
+
+        return time.equals("") ? "0초":time;
     }
 
 }
