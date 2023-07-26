@@ -4,6 +4,7 @@ import Sheep_BC.Annotations.ButtonEvent;
 import Sheep_BC.Annotations.MessageEvent;
 import Sheep_BC.Main.ButtonInteraction;
 import Sheep_BC.Main.MessageReceived;
+import Sheep_BC.Main.SelectMenuInteraction;
 import Sheep_BC.Main.Setting;
 import Sheep_BC.Supporters.Tool;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -12,9 +13,11 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.components.Modal;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 
@@ -67,10 +70,26 @@ public class Basic {
 
     @MessageEvent(key = {"도움말","help"},command = "숩도움말/help", help = "도움말을 봅니다.", type = Command_Type.BASIC)
     public void help(){
-        channel.sendMessageEmbeds(getHelp_Embed(Command_Type.BASIC).build()).queue();
+
+        SelectMenu.Builder menu = SelectMenu.create("help");
+
+        for(Command_Type commandType:Command_Type.values()){
+            menu.addOption(commandType.getCommand(), commandType.name(),commandType.getInform(),commandType.getEmoji());
+        }
+
+        if(userID.equalsIgnoreCase("336828850358976512")){
+            //menu.addOption(Command_Type.;
+        }
+
+        channel.sendMessage("숩봇의 명령어를 알려줍니다.밑에서 선택해주세요!").setActionRow(menu.build()).queue();
     }
 
-    private EmbedBuilder getHelp_Embed(Command_Type type){
+    public static void help_Menu(SelectMenuInteractionEvent event){
+        Command_Type commandType = Command_Type.valueOf(event.getValues().get(0));
+        event.replyEmbeds(getHelp_Embed(commandType).build()).setEphemeral(true).queue();
+    }
+
+    private static EmbedBuilder getHelp_Embed(Command_Type type){
         EmbedBuilder embed = new EmbedBuilder();
 
         embed.setTitle(type.getCommand() + " 명령어");

@@ -24,6 +24,8 @@ public class SelectMenuInteraction implements Runnable{
     public void run() {
         if(id.equalsIgnoreCase("Sing")){
             Sing.menu(event,option);
+        }if(id.equalsIgnoreCase("help")){
+            Basic.help_Menu(event);
         }
 
     }
