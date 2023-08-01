@@ -26,11 +26,11 @@ public class Recommand {
 
     String[] args;
 
-    public Recommand(MessageReceivedEvent event) {
+    public Recommand(MessageReceivedEvent event,String[] args) {
         this.event = event;
         userID = event.getAuthor().getId();
         channel = event.getChannel();
-        args = event.getMessage().getContentRaw().split(" ");
+        this.args = args;
         user = event.getAuthor();
     }
 

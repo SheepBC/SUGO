@@ -31,14 +31,14 @@ public class Sing {
     TextChannel textChannel;
     String[] args;
 
-    public Sing(MessageReceivedEvent event) {
+    public Sing(MessageReceivedEvent event,String[] args) {
         this.event = event;
         userID = event.getAuthor().getId();
         channel = event.getChannel();
         member = event.getMember();
         manager = event.getGuild().getAudioManager();
         textChannel = event.getTextChannel();
-        args = event.getMessage().getContentRaw().split(" ");
+       this.args = args;
     }
     @MessageEvent(key = {"노래","play"},command = "숩노래/play [링크]", help = "노래를 틉니다.", type = Command_Type.MUSIC)
     public void play(){

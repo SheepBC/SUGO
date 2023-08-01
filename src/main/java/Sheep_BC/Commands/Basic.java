@@ -33,11 +33,11 @@ public class Basic {
 
     String[] args;
 
-    public Basic(MessageReceivedEvent event) {
+    public Basic(MessageReceivedEvent event,String[] args) {
         this.event = event;
         userID = event.getAuthor().getId();
         channel = event.getChannel();
-        args = event.getMessage().getContentRaw().split(" ");
+        this.args = args;
         user = event.getAuthor();
     }
     @MessageEvent(key = {"봇","dk"},command = "숩봇", help = "숩이의 도움말을 봅니다.", type = Command_Type.BASIC)

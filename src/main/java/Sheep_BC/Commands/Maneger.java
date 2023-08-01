@@ -23,11 +23,11 @@ public class Maneger {
 
     String[] args;
 
-    public Maneger(MessageReceivedEvent event) {
+    public Maneger(MessageReceivedEvent event,String[] args) {
         this.event = event;
         userID = event.getAuthor().getId();
         channel = event.getChannel();
-        args = event.getMessage().getContentRaw().split(" ");
+       this.args = args;
         user = event.getAuthor();
     }
     @ButtonEvent(only_Maneger = true)

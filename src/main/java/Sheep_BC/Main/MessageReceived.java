@@ -4,6 +4,7 @@ import Sheep_BC.Commands.Basic;
 import Sheep_BC.Annotations.*;
 import Sheep_BC.Commands.Recommand;
 import Sheep_BC.Commands.Sing;
+import Sheep_BC.Commands.Users.User;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -24,7 +25,8 @@ public class MessageReceived implements Runnable{
     public static Class[] event_class = new Class[]{
             Basic.class,
             Recommand.class,
-            Sing.class
+            Sing.class,
+            User.class
     };
 
     public MessageReceived(MessageReceivedEvent event){
@@ -51,8 +53,8 @@ public class MessageReceived implements Runnable{
     }
 
     private void runMethod(Class clas, String command){
-        Object[] class_input = {event};
-        Class[] class_input_types = {MessageReceivedEvent.class};
+        Object[] class_input = {event,args};
+        Class[] class_input_types = {MessageReceivedEvent.class,String[].class};
 
         try {
 
