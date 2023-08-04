@@ -5,6 +5,7 @@ import Sheep_BC.Annotations.MessageEvent;
 import Sheep_BC.Commands.Basic;
 import Sheep_BC.Commands.Maneger;
 import Sheep_BC.Commands.Recommand;
+import Sheep_BC.Commands.Users.User_Rank;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -44,6 +45,9 @@ public class ButtonInteraction implements Runnable {
         }
         else if(Button_id.startsWith("Rank")){
             Recommand.rank_Button(event);
+        }
+        else if(Button_id.startsWith("UserRank")){
+            User_Rank.FullRank(event,Button_id.replace("UserRank",""));
         }
 
 

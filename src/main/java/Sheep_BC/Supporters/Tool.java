@@ -234,4 +234,13 @@ public class Tool {
         return r.equals("-") ? "0":r;
     }
 
+    public static boolean isBigI(String price){
+        try {
+            BigInteger bigInteger = new BigInteger(price);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
 }

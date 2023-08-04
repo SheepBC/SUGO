@@ -2,14 +2,21 @@ package Sheep_BC.Commands.Users;
 
 import Sheep_BC.Annotations.MessageEvent;
 import Sheep_BC.Commands.Command_Type;
-import Sheep_BC.Supporters.SugoData;
-import Sheep_BC.Supporters.Tool;
-import Sheep_BC.Supporters.UserDB;
+import Sheep_BC.Supporters.*;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class User {
 
@@ -129,4 +136,98 @@ public class User {
 
         channel.sendMessageEmbeds(embed.build()).queue();
     }
+
+    @MessageEvent(key = {"유저정보"},command = "숩유저정보 (유저) ", help = "다른유저의 정보를 확인합니다.", type = Command_Type.USER)
+    public void otherUser_inform(){
+        if(arg.length == 1){
+            SelectMenu.Builder menu = SelectMenu.create("otherUser-Inform");
+            for(String id: UserDB.getUserList()){
+                UserDB userDB = new UserDB(id);
+                menu.addOption(userDB.getName(),id,"유저ID: "+id);
+            }
+            channel.sendMessage("여기서 고르시오.").setActionRow(menu.build()).queue();
+        }
+        else {
+            String userid = arg[1]
+                    .replace("<@","")
+                    .replace(">","");
+            if(UserDB.isUser(userid)){
+                otherUser_inform_System(userid);
+            }
+            else if (!Tool.isLong(userid)){
+                channel.sendMessage("ㅅ유저정보 (유저)").queue();
+            }
+            else {
+                channel.sendMessage("회원가입된 유저가 아닙니다.").queue();
+            }
+        }
+    }
+
+
+    public void otherUser_inform_System(String id){
+        UserDB userDB = new UserDB(id);
+        EmbedBuilder embed = new EmbedBuilder();
+
+        embed.setColor(Tool.getRandomColor());
+        embed.setTitle(userDB.getName()+"님의 정보");
+
+        //수정할것 embed.addField("**총자산**",Tool.unit(userDB.getAll_Property())+" ("+userDB.get_AP_Rank()+"위)",true);
+        embed.addField("**건강**",Tool.unit(userDB.getHealth()),true);
+
+        channel.sendMessageEmbeds(embed.build()).queue();
+    }
+
+    @MessageEvent(key = {"송금"},command = "숩송금 [받는사람] [금액]", help = "다른유저에게 송금합니다.", type = Command_Type.USER)
+    public void send(){
+        String command = "숩송금 [받는사람] [금액]";
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        if(arg.length < 3){
+            channel.sendMessage(command).queue();
+            return;
+        }
+
+        String sentId = arg[1].replace("<@","").replace(">","");
+        String price = arg[2];
+        UserDB userDB = new UserDB(user);
+        UserDB sent = new UserDB(sentId);
+
+        if(!UserDB.isUser(sentId)){
+            channel.sendMessage("받는 사람이 회원가입되어있지 않습니다.").queue();
+            return;
+        }
+        if(!Tool.isBigI(price)){
+            channel.sendMessage(command).queue();
+            return;
+        }
+
+        BigInteger sent_price = new BigInteger(price);
+        if(sent_price.min(userDB.getMoney()).equals(userDB.getMoney())){
+            channel.sendMessage("돈이 부족합니다.").queue();
+            return;
+        }
+        if(sent_price.min(BigInteger.ZERO).equals(sent_price)){
+            channel.sendMessage("어디서 돈을 훔쳐갈라고!!").queue();
+            return;
+        }
+        userDB = new UserDB(user);
+        userDB.addMoney(sent_price.multiply(new BigInteger("-1")));
+        userDB = new UserDB(sentId);
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("송금");
+        embed.setColor(Tool.getRandomColor());
+        embed.addField("받는 사람",sent.getName(),true);
+
+
+        sent = new UserDB(sentId);
+        sent.addMoney(sent_price);
+        embed.addField("금액",Tool.unit(sent_price),true);
+
+        channel.sendMessage(arg[1]).queue();
+        channel.sendMessageEmbeds(embed.build()).queue();
+
+    }
+    
 }
