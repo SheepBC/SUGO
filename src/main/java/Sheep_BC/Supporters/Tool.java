@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -148,6 +149,89 @@ public class Tool {
         if(!times[4].equals(BigInteger.ZERO)) time += times[4]+"초";
 
         return time.equals("") ? "0초":time;
+    }
+
+    public static String unit(BigInteger num){
+        return unit(new BigDecimal(num.toString()));
+    }
+
+    public static String unit(long num){
+        return unit(new BigDecimal(String.valueOf(num)));
+    }
+
+    public static String unit(BigDecimal bd){
+        String stringNum = bd.add(BigDecimal.ZERO).toString();
+
+        boolean isN = false;
+        if(bd.min(BigDecimal.ZERO).equals(bd) && !bd.equals(BigDecimal.ZERO)){
+            isN = true;
+            stringNum = stringNum.replace("-","");
+        }
+
+        if(stringNum.contains("E")){
+            long b = (long) (Double.parseDouble(stringNum));
+            stringNum = String.valueOf(b);
+        }
+        if(stringNum.endsWith(".0")){
+            stringNum = stringNum.replace(".0","");
+        }
+
+        String[] dot = stringNum.split("\\.");
+
+        String[] is = dot[0].split("");
+
+        String[] DanWe = {"극","재","정","간","구","양","자","해","경","조","억","만"};
+
+
+        int i = 0;
+
+        String m = "";
+        List<String> list = new ArrayList<>();
+
+        if (is.length % 4 != 0) {
+            for(int i1 = 0;i1< is.length%4; i1++){
+                m += is[i1];
+                i++;
+            }
+            list.add(m);
+
+        }
+
+        for(int i2 = i; i2 < is.length; i2 += 4){
+            String s ="";
+            for(int i3 = i2;i3<i2+4;i3++){
+                s += is[i3];
+            }
+            list.add(s);
+        }
+
+        String r = "";
+        int a = DanWe.length-list.size()+1;
+        for(String s:list){
+            if(!s.equalsIgnoreCase("")){
+                int i1 = Integer.parseInt(s);
+                if(i1 != 0){
+                    r += String.valueOf(i1);
+                    if(a >= 0 && a != DanWe.length && !s.equalsIgnoreCase("")){
+                        r += DanWe[a];
+                    }
+                }
+                a++;
+            }
+        }
+
+        if(dot.length >= 2){
+            if(dot[1].equalsIgnoreCase("0")){
+                r += "."+dot[1];
+            }
+        }
+        if(isN){
+            r = "-"+r;
+        }
+
+        if(r.equalsIgnoreCase("")) r = "0";
+
+        return r.equals("-") ? "0":r;
     }
 
 }
