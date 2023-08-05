@@ -2,7 +2,7 @@ package Sheep_BC.Main;
 
 import Sheep_BC.Annotations.ButtonEvent;
 import Sheep_BC.Annotations.MessageEvent;
-import Sheep_BC.Commands.Basic;
+import Sheep_BC.Commands.*;
 import Sheep_BC.Commands.Maneger;
 import Sheep_BC.Commands.Recommand;
 import Sheep_BC.Commands.Users.User_Rank;
@@ -48,6 +48,9 @@ public class ButtonInteraction implements Runnable {
         }
         else if(Button_id.startsWith("UserRank")){
             User_Rank.FullRank(event,Button_id.replace("UserRank",""));
+        }
+        else if(Button_id.startsWith("UserBankruptcy")){
+            Sheep_BC.Commands.Users.User.Button_bankruptcy(event);
         }
 
 

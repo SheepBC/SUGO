@@ -7,7 +7,8 @@ public enum Command_Type {
     MUSIC("음악","음악관련 명령어",Emoji.fromUnicode("🎶")),
     SCHOOL("학교","학교관련 명령어",Emoji.fromUnicode("🏫")),
     RECOMMAND("추천","추천관련 명령어",Emoji.fromUnicode("🎲")),
-    USER("유저","유저관련 명령어",Emoji.fromUnicode("👤"));
+    USER("유저","유저관련 명령어",Emoji.fromUnicode("👤")),
+    WORK("일","일관련 명령어",Emoji.fromUnicode("🛠"));
 
     private final String command;
     private final String inform;

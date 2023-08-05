@@ -6,6 +6,7 @@ import Sheep_BC.Supporters.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -13,6 +14,8 @@ import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -229,5 +232,175 @@ public class User {
         channel.sendMessageEmbeds(embed.build()).queue();
 
     }
+    @MessageEvent(key = {"경제알람"},command = "숩경제알람", help = "경제알람을 끄고 킵니다.", type = Command_Type.USER)
+    public void setAlarm(){
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        UserDB userDB = new UserDB(user);
+        if(userDB.getEconomy_Alarm()){
+            userDB.setEconomy_Alarm(false);
+            channel.sendMessage("경제 알람이 꺼져습니다.").queue();
+        }
+        else {
+            userDB.setEconomy_Alarm(true);
+            channel.sendMessage("경제 알람이 켜져습니다.").queue();
+        }
+    }
+
+    @MessageEvent(key = {"대출"},command = "숩대출 [금액]", help = "대출합니다.", type = Command_Type.USER)
+    public void loan(){
+        String command = "숩대출 [금액]";
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        if(arg.length < 2){
+            channel.sendMessage(command).queue();
+            return;
+        }
+        String sp = arg[1];
+        if(!Tool.isBigI(sp)){
+            channel.sendMessage(command).queue();
+            return;
+        }
+        BigInteger price = new BigInteger(sp);
+        if(price.min(BigInteger.ZERO).equals(price)){
+            channel.sendMessage("돈을 갚으 시려면 갚기를 쳐주세요").queue();
+            return;
+        }
+        UserDB userDB = new UserDB(user);
+
+
+        BigInteger max = userDB.getAll_Property().multiply(new BigInteger("15"))
+                .add(userDB.getTopProperty().multiply(new BigInteger("15")))
+                .add(userDB.getTopSP().multiply(SugoData.getSP()))
+                .divide(new BigInteger("31"))
+                .subtract(userDB.getDebt());
+
+
+        //channel.sendMessage(max+" "+price).queue();
+        if(max.min(price).equals(max)){
+            price = max;
+            channel.sendMessage("대출 한도에 걸렸습니다.").queue();
+        }
+        if(price.min(BigInteger.ZERO).equals(price)){
+            price = BigInteger.ZERO;
+        }
+        userDB.addMoney(price);
+        userDB.addDebt(price);
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(user.getName()+"님의 대출");
+        embed.addField("대출한 금액",Tool.unit(price)+"베리",true);
+        embed.setFooter("일이자율 0.5%");
+        channel.sendMessageEmbeds(embed.build()).queue();
+
+    }
+
+    @MessageEvent(key = {"갚기"},command = "숩갚기 [금액]", help = " 빚을 갚습니다.", type = Command_Type.USER)
+    public void pay_back(){
+        String command = "숩갚기 [금액]";
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        UserDB userDB = new UserDB(user);
+        String sp = userDB.getMoney().toString();
+        if(arg.length >= 2){
+            sp = arg[1];
+        }
+        if(!Tool.isBigI(sp)){
+            channel.sendMessage(command).queue();
+            return;
+        }
+        BigInteger price = new BigInteger(sp);
+        if(price.min(BigInteger.ZERO).equals(price)){
+            channel.sendMessage("대출하실려면 **숩대출**로").queue();
+            return;
+        }
+        if(price.max(userDB.getMoney().add(BigInteger.ONE)).equals(price)){
+            channel.sendMessage("돈이 부족합니다.").queue();
+            return;
+        }
+        if(price.max(userDB.getDebt()).equals(price)){
+            price = userDB.getDebt();
+        }
+        sp = price.toString();
+        price = price.multiply(new BigInteger("-1"));
+        userDB.addMoney(price);
+        userDB.addDebt(price);
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(user.getName()+"님의 대출 갚기");
+        embed.addField("갚은 금액",Tool.unit(sp)+"베리",true);
+        embed.addField("남은 금액",Tool.unit(userDB.getDebt())+"베리",true);
+        embed.setFooter("일이자율 0.5%");
+        channel.sendMessageEmbeds(embed.build()).queue();
+
+    }
+    
+    @MessageEvent(key = {"파산"},command = "숩파산]", help = "파산합니다.", type = Command_Type.USER)
+    public void bankruptcy(){
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        Button button = Button.primary("UserBankruptcy"+userid, "파산신청하기");
+        event.getMessage().reply("파산을 신청하시려면 밑에 버튼을 눌려주세요!!").setActionRow(button).queue();
+    }
+
+    public static void Button_bankruptcy(ButtonInteractionEvent event){
+        String button_userid = event.getButton().getId().replace("UserBankruptcy","");
+        String userid = event.getUser().getId();
+        if(!button_userid.equalsIgnoreCase(userid)){
+            event.getChannel().sendMessage("파산 신청을 하시려면 숩파산을 눌려주세요.").queue();
+            return;
+        }
+        UserDB userDB = new UserDB(event.getUser());
+        /* 수정할것
+        if(userDB.getAll_Property().min(BigInteger.ZERO).equals(BigInteger.ZERO)){
+            SugoData.addMoney(userDB.getAll_Property(),SugoAddMoney.Bankruptcy);
+        }
+        */
+        userDB.setMoney("0");
+        /*
+        for (String id:Stock_Data.list()){
+            Stock_Data stock_data = new Stock_Data(id);
+            stock_data.addSelling_Num(new BigInteger(String.valueOf(userDB.getStock_Num(id)).replace(".0","")));
+            userDB.setStock(id,0,new BigInteger("0"));
+        }
+        
+         */
+        userDB.setDebt(0);
+        userDB.setExp(0);
+        event.getMessage().reply("파산하였습니다.").queue();
+
+    }
+
+    /*
+    @MessageEvent(key = {"출석","ㅊㅊ"},command = "숩출석/ㅊㅊ", help = "출석합니다.", type = Command_Type.USER)
+    public void attend(){
+        if(!UserDB.isUser(userid)){
+            channel.sendMessage(notUser).queue();
+            return;
+        }
+        if(SugoData.getAttend(userid).equals(LocalDate.now().toString())){
+            channel.sendMessage("오늘 이미 출석하였습니다.").queue();
+            return;
+        }
+        UserDB userDB = new UserDB(user);
+        userDB.addAttend_Num(1);
+        SugoData.setAttend(userid);
+        BigInteger add = SugoData.getAttend_Price(userDB);
+        userDB.addMoney(add);
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(user.getName()+"님의 출석");
+        embed.setColor(Tool.getRandomColor());
+        embed.addField("출석금","```"+Tool.unit(add)+"```",true);
+        embed.setFooter("출석횟수: "+userDB.getAttend_Num()+"번");
+        channel.sendMessageEmbeds(embed.build()).queue();
+    }
+
+     */
     
 }

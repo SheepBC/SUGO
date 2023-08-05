@@ -6,6 +6,7 @@ import Sheep_BC.Commands.Recommand;
 import Sheep_BC.Commands.Sing;
 import Sheep_BC.Commands.Users.User;
 import Sheep_BC.Commands.Users.User_Rank;
+import Sheep_BC.Commands.Users.User_Work;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -28,7 +29,8 @@ public class MessageReceived implements Runnable{
             Recommand.class,
             Sing.class,
             User.class,
-            User_Rank.class
+            User_Rank.class,
+            User_Work.class
     };
 
     public MessageReceived(MessageReceivedEvent event){

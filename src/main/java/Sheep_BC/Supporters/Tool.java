@@ -155,6 +155,10 @@ public class Tool {
         return unit(new BigDecimal(num.toString()));
     }
 
+    public static String unit(String num){
+        return unit(new BigDecimal(num));
+    }
+
     public static String unit(long num){
         return unit(new BigDecimal(String.valueOf(num)));
     }

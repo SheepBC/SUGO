@@ -124,7 +124,7 @@ public class UserDB {
         return ap.add(stock);
 
         */
-        return  getMoney().subtract(getTax().add(getDebt()));
+        return  getMoney().subtract(getDebt());
     }
 
 
