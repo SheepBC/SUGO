@@ -40,7 +40,7 @@ public class Basic {
         this.args = args;
         user = event.getAuthor();
     }
-    @MessageEvent(key = {"봇","dk"},command = "숩봇", help = "숩이의 도움말을 봅니다.", type = Command_Type.BASIC)
+    @MessageEvent(key = {"봇"},command = "숩봇", help = "숩이의 도움말을 봅니다.", type = Command_Type.BASIC)
     public void Bot(){
         EmbedBuilder embed = new EmbedBuilder();
         embed.setColor(Tool.getRandomColor());
@@ -68,7 +68,7 @@ public class Basic {
     }
 
 
-    @MessageEvent(key = {"도움말","help"},command = "숩도움말/help", help = "도움말을 봅니다.", type = Command_Type.BASIC)
+    @MessageEvent(key = {"도움말","help","명령어"},command = "숩도움말/help/명령어", help = "도움말을 봅니다.", type = Command_Type.BASIC)
     public void help(){
 
         SelectMenu.Builder menu = SelectMenu.create("help");
