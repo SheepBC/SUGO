@@ -1,5 +1,6 @@
 package Sheep_BC.Supporters;
 
+import Sheep_BC.Schools.School_Data;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.User;
 
@@ -167,18 +168,17 @@ public class UserDB {
         SaveNLoad.addP(HNO,Name,name);
     }
 
-    /*나중
+
     public School_Data getSchool(){
         String s = SaveNLoad.loadP(HNO,School);
         if(s == null) return null;
-        return new School_Data((String) Support.toObject(s));
+        return new School_Data((String) Tool.toObject(s));
     }
 
     public void setSchool(School_Data school){
-        SaveNLoad.addP(HNO,School,Support.toSerialize(school.toString()));
+        SaveNLoad.addP(HNO,School,Tool.toSerialize(school.toString()));
     }
 
-     */
 
     public int getDead_Num(){
         return Integer.parseInt(SaveNLoad.loadP(HNO,Dead_Num));

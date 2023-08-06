@@ -247,4 +247,26 @@ public class Tool {
         }
     }
 
+    public static BigInteger Time_Unit_To_Second(String time_unit) {
+        String[] times = time_unit.split(" ");
+        BigInteger second = BigInteger.ZERO;
+        for(String s:times){
+            try {
+                if (s.endsWith("주"))
+                    second = second.add(new BigInteger(s.replace("주", "")).multiply(new BigInteger("604800")));
+                if (s.endsWith("일"))
+                    second = second.add(new BigInteger(s.replace("일", "")).multiply(new BigInteger("86400")));
+                if (s.endsWith("시간"))
+                    second = second.add(new BigInteger(s.replace("시간", "")).multiply(new BigInteger("3600")));
+                if (s.endsWith("분"))
+                    second = second.add(new BigInteger(s.replace("분", "")).multiply(new BigInteger("60")));
+                if (s.endsWith("초")) second = second.add(new BigInteger(s.replace("초", "")));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        return second;
+    }
+
 }

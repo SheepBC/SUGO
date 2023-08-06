@@ -26,4 +26,13 @@ public class SugoData {
         }
     }
 
+    public static BigInteger getMoney(){
+        return new BigInteger("100000");//수정할것
+    }
+
+    public static void addMoney(BigInteger bInt){
+        BigInteger bi = getMoney().add(bInt);
+        //수정할것 setMoney(bi);
+    }
+
 }
